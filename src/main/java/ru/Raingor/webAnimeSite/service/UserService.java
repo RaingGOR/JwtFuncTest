@@ -29,4 +29,15 @@ public class UserService {
     public void saveUserInDataBase(User user) {
         userRepository.save(user);
     }
+
+    @Transactional
+    public void updateUserInDB(int id, User user) {
+        user.setId(id);
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public void deleteUser(int id) {
+        userRepository.deleteById(id);
+    }
 }

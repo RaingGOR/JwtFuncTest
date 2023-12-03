@@ -21,26 +21,43 @@ public class UserController {
     private final UserService userService;
 
     //Получение списка всех пользователей:
+    //Get a list with all users
     @GetMapping
     public List<UserDTO> getAllUsers() {
         return userService.getAllUsers().stream().map(this::convertToUserDTO).collect(Collectors.toList());
     }
 
     //Получение информации о конкретном пользователе по ID:
+    //Get info about a specific  user by id
     @GetMapping("/{id}")
     public UserDTO getUserById(@PathVariable("id") int id) {
         return convertToUserDTO(userService.getUserById(id));
     }
 
     //Создание нового пользователя:
-    @PostMapping
+    //create a new user
+    @PostMapping("/new")
     public ResponseEntity<HttpStatus> createNewUser(@RequestBody UserDTO userDTO) {
         userService.saveUserInDataBase(convertToUser(userDTO));
         return ResponseEntity.ok(HttpStatus.OK);
     }
+
     //Обновление информации о пользователе:
+    //update user information
+    @PostMapping("/{id}/update")
+    public ResponseEntity<HttpStatus> updateUser(@PathVariable("id") int id,
+                                                 @RequestBody UserDTO updatedUserDTO) {
+        userService.updateUserInDB(id, convertToUser(updatedUserDTO));
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
 
     //Удаление пользователя:
+    //delete user
+    @DeleteMapping("/{id}")
+    public ResponseEntity<HttpStatus> deleteUser(@PathVariable("id") int id) {
+        userService.deleteUser(id);
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
     //Дополнительные операции, например, поиск пользователей по имени или электронной почте:
     //Управление ролями и правами доступа (если это применимо):
 
