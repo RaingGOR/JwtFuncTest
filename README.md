@@ -57,7 +57,7 @@ GET /users
     "email": "BobTest@gmail.com"
   },
   
-//    Другие пользователи
+  ...
   
 ]
 ```
@@ -120,15 +120,15 @@ Content-Type: application/json
 
 ***Запрос:***
 ```http request
-POST /users/{id}/update
+PATCH /users/123/update
 Content-Type: application/json
 
 {
-//  обновленные поля пользователя
-    "name" : "Polly",
+    "name": "Polly",
     "password": "1234",
     "email": "PolyTest@gmail.com"
 }
+
 
 ```
 ***Ответ:***

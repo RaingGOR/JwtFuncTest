@@ -44,7 +44,7 @@ public class UserController {
 
     //Обновление информации о пользователе:
     //update user information
-    @PostMapping("/{id}/update")
+    @PatchMapping("/{id}/update")
     public ResponseEntity<HttpStatus> updateUser(@PathVariable("id") int id,
                                                  @RequestBody UserDTO updatedUserDTO) {
         userService.updateUserInDB(id, convertToUser(updatedUserDTO));
@@ -56,15 +56,14 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> deleteUser(@PathVariable("id") int id) {
         userService.deleteUser(id);
-        return ResponseEntity.ok(HttpStatus.OK);
+        return ResponseEntity.ok(HttpStatus.CREATED);
     }
     //Дополнительные операции, например, поиск пользователей по имени или электронной почте:
     //Управление ролями и правами доступа (если это применимо):
 
     //Convert UserDTO -> User
     private User convertToUser(UserDTO userDTO) {
-        User user = modelMapper.map(userDTO, User.class);
-        return user;
+        return modelMapper.map(userDTO, User.class);
     }
 
     //convert User -> UserDTO
