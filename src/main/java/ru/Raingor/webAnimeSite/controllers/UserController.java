@@ -1,13 +1,19 @@
 package ru.Raingor.webAnimeSite.controllers;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import ru.Raingor.webAnimeSite.dtos.UserDTO;
 import ru.Raingor.webAnimeSite.models.User;
 import ru.Raingor.webAnimeSite.service.UserService;
+import ru.Raingor.webAnimeSite.utils.exceptions.UserErrorResponse;
+import ru.Raingor.webAnimeSite.utils.exceptions.UserNotCreatedException;
+import ru.Raingor.webAnimeSite.utils.exceptions.UserNotFoundException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,7 +43,23 @@ public class UserController {
     //Создание нового пользователя:
     //create a new user
     @PostMapping("/new")
-    public ResponseEntity<HttpStatus> createNewUser(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<HttpStatus> createNewUser(@RequestBody @Valid UserDTO userDTO
+            , BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            StringBuilder errorMsg = new StringBuilder();
+            List<FieldError> errors = bindingResult.getFieldErrors();
+            for (FieldError fieldError : errors) {
+                errorMsg
+                        .append(fieldError.getField())
+                        .append(" - ")
+                        .append(fieldError.getDefaultMessage())
+                        .append(";");
+            }
+
+            throw new UserNotCreatedException(errorMsg.toString());
+        }
+
         userService.saveUserInDataBase(convertToUser(userDTO));
         return ResponseEntity.ok(HttpStatus.OK);
     }
@@ -69,5 +91,31 @@ public class UserController {
     //convert User -> UserDTO
     private UserDTO convertToUserDTO(User user) {
         return modelMapper.map(user, UserDTO.class);
+    }
+
+    // обработка исключений
+    // exception handling
+
+    // валидация при создании человека
+    @ExceptionHandler
+    public ResponseEntity<UserErrorResponse> handleExecption(UserNotCreatedException e) {
+        UserErrorResponse response = new UserErrorResponse(
+                e.getMessage(),
+                System.currentTimeMillis()
+        );
+
+        //return 400
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<UserErrorResponse> handleExecption(UserNotFoundException e) {
+        UserErrorResponse response = new UserErrorResponse(
+                "User not found",
+                System.currentTimeMillis()
+        );
+
+        //return 404
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 }

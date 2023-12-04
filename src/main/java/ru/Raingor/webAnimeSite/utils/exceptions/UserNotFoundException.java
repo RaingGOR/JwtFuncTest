@@ -1,4 +1,4 @@
-package ru.Raingor.webAnimeSite.utils;
+package ru.Raingor.webAnimeSite.utils.exceptions;
 
 public class UserNotFoundException extends RuntimeException {
 }
