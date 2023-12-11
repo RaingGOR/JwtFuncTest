@@ -8,12 +8,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import ru.Raingor.webAnimeSite.dtos.RegistrationUserDto;
 import ru.Raingor.webAnimeSite.dtos.UserDTO;
 import ru.Raingor.webAnimeSite.models.User;
 import ru.Raingor.webAnimeSite.service.UserService;
-import ru.Raingor.webAnimeSite.utils.exceptions.UserErrorResponse;
-import ru.Raingor.webAnimeSite.utils.exceptions.UserNotCreatedException;
-import ru.Raingor.webAnimeSite.utils.exceptions.UserNotFoundException;
+import ru.Raingor.webAnimeSite.utils.UserErrorResponse;
+import ru.Raingor.webAnimeSite.exceptions.UserNotCreatedException;
+import ru.Raingor.webAnimeSite.exceptions.UserNotFoundException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,7 +44,7 @@ public class UserController {
     //Создание нового пользователя:
     //create a new user
     @PostMapping("/new")
-    public ResponseEntity<HttpStatus> createNewUser(@RequestBody @Valid UserDTO userDTO
+    public ResponseEntity<HttpStatus> createNewUser(@RequestBody @Valid RegistrationUserDto registrationUserDto
             , BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
@@ -60,7 +61,8 @@ public class UserController {
             throw new UserNotCreatedException(errorMsg.toString());
         }
 
-        userService.saveUserInDataBase(convertToUser(userDTO));
+        userService.saveUserInDataBase(userService.convertToUser(registrationUserDto));
+
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
@@ -68,8 +70,8 @@ public class UserController {
     //update user information
     @PatchMapping("/{id}/update")
     public ResponseEntity<HttpStatus> updateUser(@PathVariable("id") int id,
-                                                 @RequestBody UserDTO updatedUserDTO) {
-        userService.updateUserInDB(id, convertToUser(updatedUserDTO));
+                                                 @RequestBody RegistrationUserDto updatedUserDTO) {
+        userService.updateUserInDB(id, userService.convertToUser(updatedUserDTO));
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
@@ -83,13 +85,9 @@ public class UserController {
     //Дополнительные операции, например, поиск пользователей по имени или электронной почте:
     //Управление ролями и правами доступа (если это применимо):
 
-    //Convert UserDTO -> User
-    private User convertToUser(UserDTO userDTO) {
-        return modelMapper.map(userDTO, User.class);
-    }
 
     //convert User -> UserDTO
-    private UserDTO convertToUserDTO(User user) {
+    public UserDTO convertToUserDTO(User user) {
         return modelMapper.map(user, UserDTO.class);
     }
 

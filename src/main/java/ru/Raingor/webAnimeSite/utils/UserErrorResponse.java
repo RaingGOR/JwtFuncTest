@@ -1,4 +1,4 @@
-package ru.Raingor.webAnimeSite.utils.exceptions;
+package ru.Raingor.webAnimeSite.utils;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

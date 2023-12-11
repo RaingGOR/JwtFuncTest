@@ -1,4 +1,4 @@
-package ru.Raingor.webAnimeSite.controllers;
+package ru.Raingor.webAnimeSite.service;
 
 
 import lombok.RequiredArgsConstructor;
@@ -9,15 +9,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.modelmapper.ModelMapper;
 import org.modelmapper.internal.util.Assert;
 import ru.Raingor.webAnimeSite.models.User;
 import ru.Raingor.webAnimeSite.repository.UserRepository;
-import ru.Raingor.webAnimeSite.service.UserService;
-
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
-@RequiredArgsConstructor
 public class UserServiceTest {
     @Mock           //имитация данного репозитория
     private UserRepository userRepository;

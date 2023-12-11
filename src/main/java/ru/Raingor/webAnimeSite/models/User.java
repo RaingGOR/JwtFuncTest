@@ -7,6 +7,9 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Collection;
+import java.util.List;
+
 @Entity
 @Data
 @Table(name = "users")
@@ -31,6 +34,14 @@ public class User {
     @Column(name = "email")
     @Email
     private String email;
+
+    @ManyToMany
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Collection<Role> roles;
 
     public User(String name, String password, String email) {
         this.name = name;
