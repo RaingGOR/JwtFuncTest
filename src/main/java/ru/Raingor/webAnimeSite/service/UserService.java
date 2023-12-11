@@ -1,6 +1,8 @@
 package ru.Raingor.webAnimeSite.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -9,8 +11,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import ru.Raingor.webAnimeSite.dtos.RegistrationUserDto;
 import ru.Raingor.webAnimeSite.dtos.UserDTO;
+import ru.Raingor.webAnimeSite.exceptions.UserNotCreatedException;
 import ru.Raingor.webAnimeSite.models.User;
 import ru.Raingor.webAnimeSite.repository.UserRepository;
 import ru.Raingor.webAnimeSite.exceptions.UserNotFoundException;
@@ -95,4 +100,48 @@ public class UserService {
     public UserDTO convertToUserDTO(User user) {
         return new UserDTO(user.getId(), user.getName(), user.getEmail());
     }
+
+    //logic
+    public ResponseEntity<?> getAllUsersDto() {
+        List<UserDTO> userDTOS = this.getAllUsers().stream().map(this::convertToUserDTO).collect(Collectors.toList());
+        return new ResponseEntity<>(userDTOS, HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> getUserDtoById(int id) {
+        UserDTO userDTO = convertToUserDTO(getUserById(id));
+        return new ResponseEntity<>(userDTO, HttpStatus.OK);
+    }
+
+    @Transactional
+    public ResponseEntity<?> createNewUser(RegistrationUserDto regUserDto, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            StringBuilder errorMsg = new StringBuilder();
+            List<FieldError> errors = bindingResult.getFieldErrors();
+            for (FieldError fieldError : errors) {
+                errorMsg
+                        .append(fieldError.getField())
+                        .append(" - ")
+                        .append(fieldError.getDefaultMessage())
+                        .append(";");
+            }
+
+            throw new UserNotCreatedException(errorMsg.toString());
+        }
+        saveUserInDataBase(convertToUser(regUserDto));
+
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @Transactional
+    public ResponseEntity<?> updateUser(int id, RegistrationUserDto registrationUserDto) {
+        updateUserInDB(id, convertToUser(registrationUserDto));
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Transactional
+    public ResponseEntity<?> deleteUserControl(int id) {
+        deleteUser(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 }
