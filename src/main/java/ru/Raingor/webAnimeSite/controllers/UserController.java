@@ -7,13 +7,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.Raingor.webAnimeSite.dtos.RegistrationUserDto;
-import ru.Raingor.webAnimeSite.exceptions.UserNotCreatedException;
-import ru.Raingor.webAnimeSite.exceptions.UserNotFoundException;
+import ru.Raingor.webAnimeSite.utils.exceptions.UserNotCreatedException;
+import ru.Raingor.webAnimeSite.utils.exceptions.UserNotFoundException;
 import ru.Raingor.webAnimeSite.service.UserService;
 import ru.Raingor.webAnimeSite.utils.UserErrorResponse;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
