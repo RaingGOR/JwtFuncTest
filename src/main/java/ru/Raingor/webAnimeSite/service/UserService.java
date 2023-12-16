@@ -3,6 +3,8 @@ package ru.Raingor.webAnimeSite.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -11,10 +13,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import ru.Raingor.webAnimeSite.dtos.RegistrationUserDto;
 import ru.Raingor.webAnimeSite.dtos.UserDTO;
-import ru.Raingor.webAnimeSite.utils.exceptions.UserNotCreatedException;
+import ru.Raingor.webAnimeSite.utils.exceptions.user.UserNotCreatedException;
 import ru.Raingor.webAnimeSite.models.User;
 import ru.Raingor.webAnimeSite.repository.UserRepository;
-import ru.Raingor.webAnimeSite.utils.exceptions.UserNotFoundException;
+import ru.Raingor.webAnimeSite.utils.exceptions.user.UserNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,7 +36,7 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User getUserById(int id) {
+    public User getUserById(Long id) {
         Optional<User> foundUserById = userRepository.findById(id);
         return foundUserById.orElseThrow(UserNotFoundException::new);
     }
@@ -45,13 +47,13 @@ public class UserService {
     }
 
     @Transactional
-    public void updateUserInDB(int id, User user) {
+    public void updateUserInDB(Long id, User user) {
         user.setId(id);
         userRepository.save(user);
     }
 
     @Transactional
-    public void deleteUser(int id) {
+    public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
 
@@ -89,7 +91,7 @@ public class UserService {
         return new ResponseEntity<>(userDTOS, HttpStatus.OK);
     }
 
-    public ResponseEntity<?> getUserDtoById(int id) {
+    public ResponseEntity<?> getUserDtoById(Long id) {
         UserDTO userDTO = convertToUserDTO(getUserById(id));
         return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
@@ -115,15 +117,25 @@ public class UserService {
     }
 
     @Transactional
-    public ResponseEntity<?> updateUser(int id, RegistrationUserDto registrationUserDto) {
+    public ResponseEntity<?> updateUser(Long id, RegistrationUserDto registrationUserDto) {
         updateUserInDB(id, convertToUser(registrationUserDto));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Transactional
-    public ResponseEntity<?> deleteUserControl(int id) {
+    public ResponseEntity<?> deleteUserControl(Long id) {
         deleteUser(id);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> getProfileInformation() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        User user = findByUsername(username).orElseThrow(UserNotFoundException::new);
+        UserDTO userDTO = convertToUserDTO(user);
+
+        return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
 
 }

@@ -1,11 +1,11 @@
-package ru.Raingor.webAnimeSite.utils;
+package ru.Raingor.webAnimeSite.utils.exceptions;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class UserErrorResponse {
+public class ErrorResponse {
     private String message;
     private Long timestamp;
 }

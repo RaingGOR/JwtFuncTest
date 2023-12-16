@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public class UserDetailsImpl implements UserDetails {
-    private int id;
+    private Long id;
     private String username;
     private String email;
     @JsonIgnore
@@ -37,7 +37,7 @@ public class UserDetailsImpl implements UserDetails {
     }
 
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 

@@ -19,7 +19,7 @@ import ru.Raingor.webAnimeSite.payload.response.MessageResponse;
 import ru.Raingor.webAnimeSite.repository.RoleRepository;
 import ru.Raingor.webAnimeSite.repository.UserRepository;
 import ru.Raingor.webAnimeSite.security.jwt.JwtUtils;
-import ru.Raingor.webAnimeSite.utils.exceptions.UserNotCreatedException;
+import ru.Raingor.webAnimeSite.utils.exceptions.user.UserNotCreatedException;
 
 import java.util.HashSet;
 import java.util.List;

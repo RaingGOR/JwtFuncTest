@@ -7,7 +7,7 @@ import ru.Raingor.webAnimeSite.models.User;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Integer> {
+public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByName(String name);
 
     public User findByEmail(String email);
@@ -15,5 +15,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Boolean existsByName(String username);
 
     Boolean existsByEmail(String email);
+
 
 }
